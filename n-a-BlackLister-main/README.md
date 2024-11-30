@@ -3,25 +3,26 @@
 
 [ **Please Make sure to Have a backup of your Auto-Mod In case any problems come happen!**]
 
-
+----
 ## Install
-
-## Add Prefix
+### Add Prefix
 - Add [ ~~NSBlackList ] to your AutoMod Domain Blocking Rule
-```
-
-    #~~NSBlackList
-    # A URL Black List create by NOO-ASK
-    type: submission
-    domain+body+title: []
-    action: remove
-    action_reason: "A {{kind}} with a link to a banned domain [{{match}}]"
-    message: "Your {{kind}} was removed because we don't allow links to {{match}}."
+    -  Note Make sure to Add a few links to the blacklist to get you started.
 
 ```
+    ---
+        #~~NSBlackList
+        # A URL Black List create by NOO-ASK
+        type: submission
+        domain+body+title: ["www.Blank.com"]
+        action: remove
+        action_reason: "A {{kind}} with a link to a banned domain [{{match}}]"
+        message: "Your {{kind}} was removed because we don't allow links to {{match}}."
+    ---
+```
+### Enjoy
 
-## Enjoy
-
+----
 
 ## **NOTICES
 - As of right now n-a-Blacklister can only Read urls with-in the Body and Title of a comment or post.

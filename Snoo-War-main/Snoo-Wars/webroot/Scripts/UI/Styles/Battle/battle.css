@@ -1,0 +1,81 @@
+.Battle {
+    user-select: none;
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    background-image: url(../../../../assets/Maps/DemoBattle.png);
+    background-size: cover;
+    image-rendering: pixelated;
+    z-index: 2;
+}
+
+.battle_Player, .battle_Enemy {
+    position: absolute;
+    transform: scale(2);
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+}
+
+.battle_Player img, .battle_Enemy img {
+    pointer-events: none;
+}
+
+
+.battle_Player {
+    top: 83px;
+    right: 256px;
+}
+
+.battle_Player img{
+    transform: translateY(-30px);
+}
+
+.battle_Enemy {
+    top: 28px;
+    right: 64px;
+}
+
+/*========================================================= ANIMATION ====================================================================== */
+
+
+/* Both */
+@keyframes battle-damage-blink {
+    to {
+        visibility: hidden;
+    }
+}
+.battle-damage-blink {
+    animation: battle-damage-blink 0.3s steps(2, start) infinite;
+}
+
+
+/* Player */
+@keyframes battle-attack-right {
+    0% { transform: translate3d(0, 0, 0)}
+    25% { transform: translate3d(100%, 0, 0)}
+    100% { transform: translate3d(0, 0, 0)}
+}
+.battle-attack-right {
+    animation: battle-attack-right 0.8s;
+}
+
+/* ENEMY */
+@keyframes battle-attack-left {
+    0% { 
+        transform: translate3d(0, 0, 0) rotateY(180deg)
+    }
+    25% { 
+        transform: translate3d(-100%, 0, 0) rotateY(180deg)
+    }
+    100% { 
+        transform: translate3d(0, 0, 0) rotateY(180deg)
+    }
+}
+.battle-attack-left {
+    animation: battle-attack-left 0.8s;
+}

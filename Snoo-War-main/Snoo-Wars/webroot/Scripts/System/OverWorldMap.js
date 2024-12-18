@@ -169,21 +169,20 @@ window.OverWorldMaps = {
                 y: utils.withGrid(6),
                 src: "./assets/Characters/Woof/s5-2-wolf-Sheet-walk.png",
                 behaviorLoop: [
-                    {type: "stand", direction: "left"},
+                    {type: "stand", direction: "down"},
                 ],
                 talking: [
                    {
                     events: [
-                        {type: "textMessage", text: "Hey Watch it!", facePlayer: "npcA"},
-                        {type: "battle", enemyId: "noo-ask"},
-                        {type: "updateRedis"}
+                        { type: "textMessage", text: "Need More Health?", facePlayer: "npcA"},
+                        { type: "healSnoo" }
                     ]
                    }
                 ]
             },
         },
         walls: {
-
+            
         },
         cutsceneSpaces: {
             [utils.asGridCoord(26, 7)]: [
@@ -201,8 +200,10 @@ window.OverWorldMaps = {
             ],
             [utils.asGridCoord(20, 5)]: [
                 {
+                    
                     events: [
-                        { type: "battle", }
+                        { type: "battlePvp" },
+                        { who: "player", type: "walk", direction: "down", },
                     ]
                 }
             ],
@@ -249,36 +250,30 @@ window.OverWorldMaps = {
             },
         },
         walls: {
-            [utils.asGridCoord(0, 3)]: true, 
-            [utils.asGridCoord(0, 4)]: true,
-            [utils.asGridCoord(0, 5)]: true, 
-            [utils.asGridCoord(0, 6)]: true, 
-            [utils.asGridCoord(0, 7)]: true, 
+            [utils.asGridCoord(0, 3)]: true, [utils.asGridCoord(0, 4)]: true, [utils.asGridCoord(0, 5)]: true, 
+            [utils.asGridCoord(0, 6)]: true, [utils.asGridCoord(0, 7)]: true, 
 
-            [utils.asGridCoord(10, 4)]: true, 
-            [utils.asGridCoord(10, 5)]: true, 
-            [utils.asGridCoord(10, 6)]: true, 
+            [utils.asGridCoord(1, 2)]: true, [utils.asGridCoord(1, 4)]: true, [utils.asGridCoord(1, 8)]: true, 
+            
+            [utils.asGridCoord(2, 2)]: true, [utils.asGridCoord(2, 4)]: true, [utils.asGridCoord(2, 8)]: true, 
+
+            [utils.asGridCoord(3, 2)]: true, [utils.asGridCoord(3, 4)]: true, [utils.asGridCoord(3, 9)]: true, 
+
+            [utils.asGridCoord(4, 2)]: true, [utils.asGridCoord(4, 4)]: true, [utils.asGridCoord(4, 8)]: true,
+
+            [utils.asGridCoord(5, 2)]: true, [utils.asGridCoord(5, 4)]: true, [utils.asGridCoord(5, 8)]: true, 
+
+            [utils.asGridCoord(6, 2)]: true, [utils.asGridCoord(6, 4)]: true, [utils.asGridCoord(6, 8)]: true,
+
+            [utils.asGridCoord(7, 2)]: true, [utils.asGridCoord(7, 8)]: true, 
+
+            [utils.asGridCoord(8, 3)]: true, [utils.asGridCoord(8, 8)]: true,
+
+            [utils.asGridCoord(9, 3)]: true, [utils.asGridCoord(9, 8)]: true, 
+
+            [utils.asGridCoord(10, 4)]: true, [utils.asGridCoord(10, 5)]: true, [utils.asGridCoord(10, 6)]: true, 
             [utils.asGridCoord(10, 7)]: true, 
 
-            [utils.asGridCoord(1, 8)]: true, 
-            [utils.asGridCoord(2, 8)]: true, 
-            [utils.asGridCoord(5, 8)]: true, 
-            [utils.asGridCoord(5, 8)]: true, 
-            [utils.asGridCoord(6, 8)]: true,
-            [utils.asGridCoord(7, 8)]: true, 
-            [utils.asGridCoord(8, 8)]: true, 
-            [utils.asGridCoord(9, 8)]: true, 
-
-            [utils.asGridCoord(1, 2)]: true, 
-            [utils.asGridCoord(2, 2)]: true, 
-            [utils.asGridCoord(3, 2)]: true, 
-            [utils.asGridCoord(4, 2)]: true, 
-            [utils.asGridCoord(5, 2)]: true, 
-            [utils.asGridCoord(6, 2)]: true, 
-            [utils.asGridCoord(7, 2)]: true, 
-
-            [utils.asGridCoord(8, 3)]: true, 
-            [utils.asGridCoord(9, 3)]: true,
         },
         cutsceneSpaces: {
             [utils.asGridCoord(9, 7)]: [
@@ -345,47 +340,40 @@ window.OverWorldMaps = {
                    {
                         events: [
                             { type: "textMessage", text: "I dont like your look", facePlayer: "npcB" },
+                            { type: "textMessage", text: "Well I dont like your look"},
                             { type: "addStoryFlag", flag: "Battle_Won_001" },
-                            { type: "battle", enemyId: "noo-ask" },
-                            { type: "updateRedis" },
+                            // { type: "battle", enemyId: "Tester" },
+                            // { type: "updateRedis" },
                         ],
                    }
                 ],
             },
         },
         walls: {
-            [utils.asGridCoord(0, 3)]: true, 
-            [utils.asGridCoord(0, 4)]: true,
-            [utils.asGridCoord(0, 5)]: true, 
-            [utils.asGridCoord(0, 6)]: true, 
-            [utils.asGridCoord(0, 7)]: true, 
+            [utils.asGridCoord(0, 3)]: true, [utils.asGridCoord(0, 4)]: true, [utils.asGridCoord(0, 5)]: true, 
+            [utils.asGridCoord(0, 6)]: true, [utils.asGridCoord(0, 7)]: true, 
 
-            [utils.asGridCoord(10, 4)]: true, 
-            [utils.asGridCoord(10, 5)]: true, 
-            [utils.asGridCoord(10, 6)]: true, 
+            [utils.asGridCoord(1, 2)]: true, [utils.asGridCoord(1, 4)]: true, [utils.asGridCoord(1, 8)]: true, 
+            
+            [utils.asGridCoord(2, 2)]: true, [utils.asGridCoord(2, 4)]: true, [utils.asGridCoord(2, 8)]: true, 
+
+            [utils.asGridCoord(3, 2)]: true, [utils.asGridCoord(3, 4)]: true, [utils.asGridCoord(3, 9)]: true, 
+
+            [utils.asGridCoord(4, 2)]: true, [utils.asGridCoord(4, 4)]: true, [utils.asGridCoord(4, 8)]: true,
+
+            [utils.asGridCoord(5, 2)]: true, [utils.asGridCoord(5, 4)]: true, [utils.asGridCoord(5, 8)]: true, 
+
+            [utils.asGridCoord(6, 2)]: true, [utils.asGridCoord(6, 4)]: true, [utils.asGridCoord(6, 8)]: true,
+
+            [utils.asGridCoord(7, 2)]: true, [utils.asGridCoord(7, 8)]: true, 
+
+            [utils.asGridCoord(8, 3)]: true, [utils.asGridCoord(8, 8)]: true,
+
+            [utils.asGridCoord(9, 3)]: true, [utils.asGridCoord(9, 8)]: true, 
+
+            [utils.asGridCoord(10, 4)]: true, [utils.asGridCoord(10, 5)]: true, [utils.asGridCoord(10, 6)]: true, 
             [utils.asGridCoord(10, 7)]: true, 
 
-            [utils.asGridCoord(1, 8)]: true, 
-            [utils.asGridCoord(2, 8)]: true, 
-            [utils.asGridCoord(5, 8)]: true, 
-            [utils.asGridCoord(5, 8)]: true, 
-            [utils.asGridCoord(6, 8)]: true,
-            [utils.asGridCoord(7, 8)]: true, 
-            [utils.asGridCoord(8, 8)]: true, 
-            [utils.asGridCoord(9, 8)]: true, 
-
-            [utils.asGridCoord(1, 2)]: true, 
-            [utils.asGridCoord(2, 2)]: true, 
-            [utils.asGridCoord(3, 2)]: true, 
-            [utils.asGridCoord(3, 9)]: true, 
-            [utils.asGridCoord(4, 2)]: true,
-            [utils.asGridCoord(4, 8)]: true, 
-            [utils.asGridCoord(5, 2)]: true, 
-            [utils.asGridCoord(6, 2)]: true, 
-            [utils.asGridCoord(7, 2)]: true, 
-
-            [utils.asGridCoord(8, 3)]: true, 
-            [utils.asGridCoord(9, 3)]: true,
         },
         cutsceneSpaces: {
             [utils.asGridCoord(9, 7)]: [

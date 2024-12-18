@@ -13,6 +13,8 @@ class Person extends GameObject {
             "left": ['x', -1],
             "right": ['x', 1],
         }
+
+        this.standBehaviorTimeout;
     }
 
     update(state){
@@ -41,40 +43,46 @@ class Person extends GameObject {
             return;
         }
 
-        this.retry = false;
         this.direction = behavior.direction;
 
-        switch(behavior.type){
-            case 'walk':
-                if(state.map.isSpaceTaken(this.x, this.y, this.direction)){
-                    behavior.retry && setTimeout(() => {
-                       this.startBehavior(state, behavior);
-                    }, 10);
-                    return;
-                }
-    
-                this.moveingProgressRemaining = 16;
+        if (behavior.type === "walk"){
+            if(state.map.isSpaceTaken(this.x, this.y, this.direction)){
+                
+                behavior.retry && setTimeout(() => {
+                   this.startBehavior(state, behavior);
+                }, 10);
+                return;
+            }
 
-                // intent
-                const intentPosition = utils.nextPosition(this.x, this.y, this.direction);
-                this.intentPosition = [
-                    intentPosition.x,
-                    intentPosition.y,
-                ];
+            // Setting Next space
+            this.moveingProgressRemaining = 16;
 
-                this.updateSprite(state);
-                break;
-            
-            case 'stand':
-                this.isStanding = true;
-                setTimeout(() => {
-                    EventUtils.emitEvent("PersonStandComplete", {
-                        whoId: this.id,
-                    });
-                }, behavior.time);
+            // intent
+            const intentPosition = utils.nextPosition(this.x, this.y, this.direction);
+            this.intentPosition = [
+                intentPosition.x,
+                intentPosition.y,
+            ];
+
+            this.updateSprite(state);
+        }
+
+        if(behavior.type === "stand"){
+            this.isStanding = true;
+
+            if(this.standBehaviorTimeout){
+                clearTimeout(this.standBehaviorTimeout);
+            }
+
+            this.standBehaviorTimeout = setTimeout(() => {
+
+                EventUtils.emitEvent("PersonStandComplete", {
+                    whoId: this.id,
+                });
+
                 this.isStanding = false;
 
-                break;
+            }, behavior.time);
         }
     }
 
@@ -83,15 +91,18 @@ class Person extends GameObject {
     */
     updatePosition(){
         const [property, value] = this.directionUpdate[this.direction];
-
         this[property] += value;
+
+        // remove Progress
         this.moveingProgressRemaining -= 1;
 
         if (this.moveingProgressRemaining === 0){
+
+            // Finnished walking.             
+            this.intentPosition = null;
             EventUtils.emitEvent("PersonWalkingComplete", {
                 whoId: this.id,
             });
-            this.intentPosition = null;
         }
     }
 

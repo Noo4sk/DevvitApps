@@ -56,7 +56,10 @@ class Sprite {
         }
     }
 
+    
     draw(ctx, cameraPerson){
+        // console.log(`Camera Person [${cameraPerson.x},${cameraPerson.y}]`);
+        // console.log(`gameObject [${this.gameObject.x},${this.gameObject.y}]`);
         const x = this.gameObject.x - 8 + utils.withGrid(10.5) - cameraPerson.x;
         const y = this.gameObject.y - 12 + utils.withGrid(6) - cameraPerson.y;
 

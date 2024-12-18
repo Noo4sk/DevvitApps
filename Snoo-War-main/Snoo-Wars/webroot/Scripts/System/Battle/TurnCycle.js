@@ -12,7 +12,7 @@ class TurnCycle {
         const caster = this.battle.combatants[casterId];
         const enemyId = this.battle.activeCombatants[caster.team === "player" ? "enemy" : "player"];
         const enemy = this.battle.combatants[enemyId];
-
+        
         const submission = await this.onNewEvent({
             type: "submissionMenu",
             enemy,
@@ -107,9 +107,12 @@ class TurnCycle {
 
 
     async init(){
+
+        console.log(this.battle.enemy);
+
         await this.onNewEvent({
             type: "textMessage",
-            text: `${this.battle.enemy.name} wants to challage you to a fight.`
+            text: `${this.battle.enemy.playerName} wants to challage you to a fight.`
         });
         this.turn();
     }

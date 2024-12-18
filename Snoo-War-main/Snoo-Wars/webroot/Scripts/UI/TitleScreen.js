@@ -21,10 +21,14 @@ class TitleScreen{
     }
 
     createElement(){
+        const { playerState } = window;
+        const snoo = playerState.snoo[window.playerId];
+
         this.element = document.createElement("div");
         this.element.classList.add("TitleScreen");
         this.element.innerHTML = (`
-            <img class="TitleScreen_Logo" src="/assets/Logo/TitleScreen_Logo.png" alt="Snoo Wars" />
+            <p class="Title_p">SNOO WARS!</p>
+            <img class="TitleScreen_Logo" src="${snoo.snooImage}" alt="Snoo Wars" />
         `);
     }
 

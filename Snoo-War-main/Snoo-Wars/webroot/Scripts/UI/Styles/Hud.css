@@ -12,3 +12,12 @@
 .Hud .Combatant_type {
     display: none;
 }
+
+.Fps-container {
+    position: absolute;
+    left: 277px;
+    top: -2px;
+
+    font-size: 5px;
+    color: gold;
+}

@@ -5,16 +5,22 @@ class OverWorldEvent{
     }
 
     updateRedis(resolve){
-
+        console.log(`Updating Redis`)
         if(!window.State_Testing){
             const jString = JSON.stringify(window.playerState);
-            console.log(`window.playerState: ${jString}`);
-    
+            const ID = localStorage.getItem("playerId");
+            
+            console.log(`
+                id: ${ID},
+                window.playerState\n ${jString}    
+            `);
+
             //Update Redis Now.
             window.parent?.postMessage({
                 type: "updateRedis",
                 data: {
                     playerState: jString,
+                    id: ID,
                 }
             }, '*');
     
@@ -125,7 +131,7 @@ class OverWorldEvent{
     }
 
     battle(resolve){
-        window.snoo_war_Audio_bgm.src = "./assets/Audio/SLOWEST_TEMPO_Retro_Platforming_David_Fesliyan.mp3";
+        //window.snoo_war_Audio_bgm.src = "./assets/Audio/SLOWEST_TEMPO_Retro_Platforming_David_Fesliyan.mp3";
 
         
         // TODO MAKE BLINKING SCENE TRANSISTION?
@@ -145,6 +151,75 @@ class OverWorldEvent{
 
 
     }
+
+
+    healSnoo(resolve){
+        Object.keys(window.playerState.snoo).forEach(key => {
+            window.playerState.snoo[key].hp = window.playerState.snoo[key].maxHp;
+            EventUtils.emitEvent("PlayerStateUpdated");
+
+        });
+
+        resolve();
+    }
+
+    noBattleFound(){
+
+    }
+
+    battlePvp(resolve){
+        window.AudioBgm.src = "./assets/Audio/SLOWEST_TEMPO_Retro_Platforming_David_Fesliyan.mp3";
+        window.AudioBgm.play()
+
+        const keys = Object.keys(Enemies);
+        console.log(`Current keys: ${keys}`);
+        
+        let index = keys.indexOf(window.playerId)
+        console.log(`Index [If Found]: ${index}`);
+
+        if(index != -1){
+            keys.splice(index, 1);
+            console.log(`Filter keys: ${keys}`);
+        }
+
+        let randomKey = keys[Math.floor(Math.random() * keys.length)];;
+
+        // No Fights Found.
+        if (keys.length <= 0){
+            
+            const message = new TextMessage({
+                text: `Oh No.. We couldn't find any battles...`,
+                onComplete: () => resolve()
+            });
+    
+            message.init(document.querySelector(".game-container"));
+
+            return;
+        }
+
+        console.log(`
+            keys: ${keys}
+            randomKey: ${randomKey}
+            Enemies[${randomKey}]\n${JSON.stringify(Enemies[randomKey])}
+        `)
+
+        // TODO MAKE BLINKING SCENE TRANSISTION?
+        const sceneTransitionOverWorld = new SceneTransition();
+        const battle = new Battle({
+            enemy: Enemies[randomKey],
+            onComplete: (didWin) => {
+                resolve(didWin ? "Winner" : "Lost");
+            }
+        });
+
+        sceneTransitionOverWorld.init(document.querySelector(".game-container"), async () => {
+            sceneTransitionOverWorld.fadeOut();
+            
+            battle.init(document.querySelector(".game-container"));
+        });
+
+    }
+
 
     init(){
         return new Promise(resolve => {

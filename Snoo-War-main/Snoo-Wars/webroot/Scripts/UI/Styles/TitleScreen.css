@@ -1,4 +1,5 @@
 .TitleScreen {
+    user-select: none;
     position: absolute;
     left: 0;
     right: 0;
@@ -8,10 +9,20 @@
     background: #000;
 }
 
+.Title_p {
+    position: absolute;
+    left: 132px;
+    color: #fff;
+}
+
 .TitleScreen_Logo {
+    position: absolute;
+    top: 50px;
+    left: 160px;
+
     display: block;
     margin: 0;
-    width: 128px;
+    width: 32px;
     image-rendering: pixelated;
 
     color: white;
@@ -19,6 +30,7 @@
 
 .TitleScreen .KeyBoardMenu {
     position: relative;
+    top: 100px;
     margin: 0 auto;
     width: 100px;
     border: 0;
@@ -26,12 +38,23 @@
 }
 
 .TitleScreen button {
-    color: #fff;
+    color: black;
+    background-color: var(--menu-background);
     justify-content: center;
     padding: 0;
 }
 
+.TitleScreen .KeyBoardMenu button:focus {
+    color: black;
+    background-color: var(--menu-selected-background);
+}
+
+
 .TitleScreen .DescriptionBox {
+    position: absolute;
+    top: 125px;
+    right: 130px;
+
     background: transparent;
     color: #fff;
     border: 0;

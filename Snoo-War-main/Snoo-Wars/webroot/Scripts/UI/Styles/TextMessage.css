@@ -13,6 +13,22 @@
     color: var(--menu-font-color);
 }
 
+.Battle .TextMessage {
+    caret-color: transparent;
+    position: absolute;
+    left: 62px;
+    right: 60px;
+    bottom: 33px;
+    height: 26px;
+
+    padding: 7px;
+
+    background: var(--menu-background);
+    border-top: 1px solid var(--menu-border-color);
+    color: var(--menu-font-color);
+}
+
+
 .TextMessage_p {
     margin: 0;
     font-size: 8px;

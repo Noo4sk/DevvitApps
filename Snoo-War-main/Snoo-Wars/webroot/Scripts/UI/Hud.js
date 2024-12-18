@@ -35,7 +35,7 @@ class Hud {
         this.createElement();
         container.appendChild(this.element);
 
-        document,addEventListener("PlayerStateUpdated", () => {
+        document.addEventListener("PlayerStateUpdated", () => {
             this.update();
         });
     }

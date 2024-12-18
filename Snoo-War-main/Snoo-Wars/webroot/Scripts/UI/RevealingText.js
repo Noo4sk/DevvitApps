@@ -17,6 +17,7 @@ class RevealingText {
             this.timeout = setTimeout(() => {
                 this.revealOnceCharacter(list);
             }, next.delayAfter);
+
         } else {
             this.isDone = true;
         }

@@ -2,16 +2,24 @@ class PlayerState {
     constructor(config){
         let {id, username, state} = config
         
-        if(state === undefined){
-        }
-
-        this.snoo = {
-            [id]: state.playerState.snoo[id]
+        this.snoo = { 
+            [id]: state.playerState.snoo[id] 
         } || {};
         this.lineup = [];
         this.items = [];
         this.heldActions = [];
         this.storyFlags = {};
+        this.playerName = state.playerName || "";
+
+
+        if(Object.keys(state.playerState.storyFlags).length > 0){
+            Object.keys(state.playerState.storyFlags).forEach(key => {
+                this.storyFlags = {
+                    ...this.storyFlags, 
+                    [key]: state.playerState.storyFlags[key]
+                }
+            });
+        }
 
         if(state.playerState.heldActions.length <= 0){
             this.heldActions.push('damage1');

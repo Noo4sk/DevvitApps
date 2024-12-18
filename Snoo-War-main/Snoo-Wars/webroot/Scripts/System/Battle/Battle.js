@@ -1,12 +1,17 @@
 class Battle {
+
+
     constructor(
         { enemy, onComplete }
     ){
-        this.enemy = enemy;
         this.onComplete = onComplete;
-
         this.combatants = {};
 
+        this.enemyID;
+        this.enemy = enemy;
+
+        console.log(`[Battle: 13] Enemy:\n${JSON.stringify(this.enemy, undefined, 2)}`);
+        
         this.activeCombatants = {
             player: null, //'playerSnoo',
             enemy: null //'enemySnoo'
@@ -21,9 +26,13 @@ class Battle {
             );
         });
 
+
         Object.keys(this.enemy.snoo).forEach( key => {
+            console.log(`Key: ${key},\nsnoo: ${JSON.stringify(this.enemy.snoo[key], undefined, 2)}`);
+
+            this.enemyID = this.enemy.snoo[key].id
             this.addCombatant(
-                "e_"+key,
+                key,
                 "enemy",
                 this.enemy.snoo[key],
                );
@@ -43,6 +52,7 @@ class Battle {
     }
 
     createElement() {
+
         this.element = document.createElement("div");
         this.element.classList.add("Battle");
         this.element.innerHTML = (`
@@ -50,12 +60,19 @@ class Battle {
                 <img src="${`./assets/Characters/Cat/s5-2-cat-Sheet-walk.png`}" alt="PlayerSnoo" />
             </div>
             <div class="battle_Enemy">
-                <img src="${this.enemy.src}" alt=${this.enemy.name} />
+               <!-- <img src="${this.enemy.snoo[this.enemyID].snooImage}" alt=${this.enemy.playerName} /> -->
             </div>
         `);
     }
 
     addCombatant(id, team, config){
+        console.log(JSON.stringify({
+            ...Snoo[config.id],
+            ...config,
+            team,
+            isPlayerControlled: team === "player",
+        }, undefined, 2));
+
         this.combatants[id] = new Combatant({
             ...Snoo[config.id],
             ...config,
@@ -64,6 +81,7 @@ class Battle {
 
         }, this);
         this.activeCombatants[team] = this.activeCombatants[team] || id;
+
     }
 
     async init(container){
@@ -110,12 +128,12 @@ class Battle {
 
                 }
 
-
-
                 sceneTransitionOverWorld.init(document.querySelector(".game-container"), async () => {
                     sceneTransitionOverWorld.fadeOut();
                     
-                    window.snoo_war_Audio_bgm.src = "./assets/Audio/8_Bit_Menu_David_Renda.mp3";
+                    window.AudioBgm.src = "./assets/Audio/8_Bit_Menu_David_Renda.mp3";
+                    window.AudioBgm.play();
+
                     this.element.remove();
                     this.onComplete(winner === "player");
 

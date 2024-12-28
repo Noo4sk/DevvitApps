@@ -1,5 +1,6 @@
 class TextMessage {
-    constructor({ text, onComplete}){
+    constructor({ text, onComplete, actor}){
+        this.actor = actor;
         this.text = text;
         this.onComplete = onComplete;
 
@@ -20,7 +21,8 @@ class TextMessage {
 
         this.revealingText = new RevealingText({
             element: this.element.querySelector(".TextMessage_p"),
-            text: this.text
+            text: this.text,
+            actor: this.actor
         });
 
         // bindings

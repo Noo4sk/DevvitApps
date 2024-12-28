@@ -3,40 +3,17 @@ class OverWorldEvent{
         this.map = map;
         this.event = event;
     }
-
-    updateRedis(resolve){
-        console.log(`Updating Redis`)
-        if(!window.State_Testing){
-            const jString = JSON.stringify(window.playerState);
-            const ID = localStorage.getItem("playerId");
-            
-            console.log(`
-                id: ${ID},
-                window.playerState\n ${jString}    
-            `);
-
-            //Update Redis Now.
-            window.parent?.postMessage({
-                type: "updateRedis",
-                data: {
-                    playerState: jString,
-                    id: ID,
-                }
-            }, '*');
     
-            resolve();
-
-        } else {
-            console.log('Currently Testing');
-            resolve();
-
-        }
+    updateRedis(resolve){
+        this.map.overworld.progress.save();
+        resolve();
     }
 
     pause(resolve){
         this.map.isPaused = true;
 
         const menu = new PauseMenu({
+            progress: this.map.overworld.progress,
             onComplete: () => {
                 this.map.isPaused = false;
                 this.map.overworld.startGameLoop();
@@ -44,6 +21,11 @@ class OverWorldEvent{
             }
         });
         menu.init(document.querySelector(".game-container"));
+    }
+
+    updateStoryProgress(resolve){
+        window.playerState.progress.amount += 1;
+        resolve();
     }
 
     addStoryFlag(resolve){
@@ -95,6 +77,14 @@ class OverWorldEvent{
         document.addEventListener("PersonWalkingComplete", completeHandler);
     }
 
+
+    ChangeCamera(resolve){
+        const who = this.map.gameObjects[this.event.who];
+        this.map.overworld.cameraPerson = who;
+
+        resolve()
+    }
+
     textMessage(resolve){
 
         if(this.event.facePlayer){
@@ -104,14 +94,14 @@ class OverWorldEvent{
 
         const message = new TextMessage({
             text: this.event.text,
-            onComplete: () => resolve()
+            onComplete: () => resolve(),
+            actor: this.event.actor
         });
 
         message.init(document.querySelector(".game-container"));
     }
 
     changeMap(resolve){
-
         // Deactivate old Objects;
         Object.values(this.map.gameObjects).forEach( obj => {
             obj.isMounted = false;
@@ -124,14 +114,13 @@ class OverWorldEvent{
                 y: this.event.y,
                 direction: this.event.direction,
             });
-
             sceneTransition.fadeOut();
             resolve();
         });
     }
 
     battle(resolve){
-        //window.snoo_war_Audio_bgm.src = "./assets/Audio/SLOWEST_TEMPO_Retro_Platforming_David_Fesliyan.mp3";
+       // window.snoo_war_Audio_bgm.src = "./assets/Audio/SLOWEST_TEMPO_Retro_Platforming_David_Fesliyan.mp3";
 
         
         // TODO MAKE BLINKING SCENE TRANSISTION?
@@ -153,33 +142,18 @@ class OverWorldEvent{
     }
 
 
-    healSnoo(resolve){
-        Object.keys(window.playerState.snoo).forEach(key => {
-            window.playerState.snoo[key].hp = window.playerState.snoo[key].maxHp;
-            EventUtils.emitEvent("PlayerStateUpdated");
-
-        });
-
-        resolve();
-    }
-
-    noBattleFound(){
-
-    }
-
     battlePvp(resolve){
-        window.AudioBgm.src = "./assets/Audio/SLOWEST_TEMPO_Retro_Platforming_David_Fesliyan.mp3";
-        window.AudioBgm.play()
-
+        console.groupCollapsed(`BattlePvp: ${Math.floor(Math.random() * 101)}`);
         const keys = Object.keys(Enemies);
-        console.log(`Current keys: ${keys}`);
+
+        Logging.log(`Current keys:\n\n${keys}`);
         
         let index = keys.indexOf(window.playerId)
-        console.log(`Index [If Found]: ${index}`);
+        Logging.log(`find ME Index: ${index}`);
 
         if(index != -1){
             keys.splice(index, 1);
-            console.log(`Filter keys: ${keys}`);
+            Logging.log(`List without ME: ${keys}`);
         }
 
         let randomKey = keys[Math.floor(Math.random() * keys.length)];;
@@ -197,11 +171,16 @@ class OverWorldEvent{
             return;
         }
 
-        console.log(`
-            keys: ${keys}
-            randomKey: ${randomKey}
-            Enemies[${randomKey}]\n${JSON.stringify(Enemies[randomKey])}
-        `)
+        window.AudioBgm.src = "./assets/Audio/SLOWEST_TEMPO_Retro_Platforming_David_Fesliyan.mp3";
+        window.AudioBgm.play()
+
+        Logging.logObject({
+            name: `Random Enemies Selected`,
+            object: Enemies[randomKey],
+            extraItems: [
+                `Enemies[${randomKey}]`
+            ]
+        });
 
         // TODO MAKE BLINKING SCENE TRANSISTION?
         const sceneTransitionOverWorld = new SceneTransition();
@@ -215,15 +194,58 @@ class OverWorldEvent{
         sceneTransitionOverWorld.init(document.querySelector(".game-container"), async () => {
             sceneTransitionOverWorld.fadeOut();
             
+            window.isInBattle = true;
+            console.log(`is in battle: ${window.isInBattle}`);
+            
             battle.init(document.querySelector(".game-container"));
         });
 
+
+        console.groupEnd();
     }
 
 
+// ===================================== Snoo Actions ===========================================================================
+    healSnoo(resolve){
+        Object.keys(window.playerState.snoo).forEach(key => {
+            window.playerState.snoo[key].hp = window.playerState.snoo[key].maxHp;
+            EventUtils.emitEvent("PlayerStateUpdated");
+        });
+
+        resolve();
+    }
+
+    giveAbility(resolve){
+        const SnooAbility = window.playerState.heldActions;
+        console.log(`Before: ${SnooAbility}`);
+
+        const index = SnooAbility.indexOf(this.event.ability);
+        if(index === -1){
+            window.playerState.heldActions.push(this.event.ability);
+        }
+
+        console.log(`After: ${SnooAbility}`);
+        resolve();
+    }
+
+    removeAbility(resolve){
+        const SnooAbility = window.playerState.heldActions;
+        console.log(`Before: ${SnooAbility}`);
+
+        const index = SnooAbility.indexOf(this.event.ability);
+        if(index != -1){
+            window.playerState.heldActions.splice(index, 1);
+        }
+
+        console.log(`After: ${SnooAbility}`);
+        resolve();
+    }
+
+// ===================================== INIT ===========================================================================
     init(){
         return new Promise(resolve => {
-            this[this.event.type](resolve)
+            this[this.event.type](resolve);
+
         });
     }
 }

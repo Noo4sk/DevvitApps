@@ -3,8 +3,17 @@ class OverWorld {
         this.element = config.element;
         this.canvas = this.element.querySelector(".game-canvas");
         this.canvas.setAttribute('tabindex', '0');
-
         this.ctx = this.canvas.getContext("2d");
+
+        window.addEventListener('resize', function(){
+            var width = document.body.offsetWidth;
+            var height = document.body.offsetHeight;
+            
+            this.ctx.canvas.width = width;
+            this.ctx.canvas.height = height;
+            this.ctx.translate(width/2, height/2);
+
+        }, false);
 
         this.map = null;
 
@@ -28,32 +37,24 @@ class OverWorld {
         this.pDelta = null;
         this.pBeat = null;
         this.pLastRender = null;
+        this.pReadRate = null;
+
+        this.pPlayerPos = null;
 
         this.cameraPerson = null
     }
 
-    AudioFadeOut(duration){
-
-        const startTime = window.AudioCtx.currentTime;
-        const endTime = startTime + duration;
-
-        console.log(`Fading out Audio.. in ${endTime}`)
-        window.AudioGainNode.gain.setValueAtTime(window.AudioGainNode.gain.value, startTime);
-        window.AudioGainNode.gain.linearRampToValueAtTime(0, endTime);
-
-        // Optionally, pause the audio after the fade-out
-        setTimeout(() => {
-            window.AudioBgm.pause();
-        }, duration * 1000);
-    }
-
-
+    // ====== GAME LOOP Work to be Done ======
     bloodFlow(delta){
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            
-        this.cameraPerson = this.map.gameObjects.player;
         
+
+        if(!this.map.isCutscenePlaying){
+            this.map.overworld.cameraPerson = this.map.gameObjects['player'];
+
+        }
+
         Object.values(this.map.gameObjects).forEach( obj => {
             obj.update({
                 delta,
@@ -81,49 +82,31 @@ class OverWorld {
 
     }
 
-    
-    bindMouseClick(container){
-        // container.addEventListener(`mousedown`, (event) => {
-        //     const rect = this.canvas.getBoundingClientRect(); // canvas position relative to viewport
-
-        //     const canvasX = event.clientX - rect.left;
-        //     const canvasY = event.clientY - rect.top;
-
-        //     let x = Math.floor(canvasX - 8 + utils.withGrid(10.5) - this.cameraPerson.x);
-        //     let y = Math.floor(canvasY - 12 + utils.withGrid(10.5) - this.cameraPerson.y);
-        
-        //     window.MouseClick = {
-        //         x: x,
-        //         y: y,
-        //     };
-            
-        //     console.log(`Mouse Click [${(MouseClick.x / 16)},${(MouseClick.y / 16)}]`);
-        // });
-    }
-
+    // ====== Dev Stats HTML ======
     devStats(container){
         this.developerStats = document.createElement("div");
         this.developerStats.classList.add("developerStats");
         this.developerStats.innerHTML = (`
             <svg class="background">
-                <rect width="60" height="60" ></rect>
+                <rect width="100" height="100" ></rect>
             </svg>
             <span class="Items">
                 <p class="fps">FPS | 9999999999</p>
                 <p class="delta">Delta | 9999999999</p>
                 <p class="beat">Beat | 9999999999</p>
                 <p class="lastRender">LastRender | 9999999999</p>
+                <p class="readRate">ReadRate | 9999999999</p>
+                <p id="playerPos" class="ClientPlayerPos"> X: 0 | Y: 0 </p>
             </span>
         `);
 
         container.appendChild(this.developerStats);
     }
 
-
-
-
+    // ====== GAME LOOP ======
     startGameLoop() {
-        this.bindMouseClick(this.canvas);
+        const readRate = 800;
+        let readWait = 0;
 
         let lastRender;
         const beat = 1/60;
@@ -150,8 +133,34 @@ class OverWorld {
 
                 this.bloodFlow(delta);
 
+                this.pPlayerPos.innerText = `X: ${window.playerState.progress.x} | Y: ${window.playerState.progress.y} || X: ${(window.playerState.progress.x/16)} | Y: ${(window.playerState.progress.y/16)}`
+
                 delta -= beat;
             }
+
+            // Increment readWait + 1
+            readWait++
+            this.pReadRate.innerText = `ReadRate: ${readWait} / ${readRate}`;
+            if( readWait >= readRate){
+
+                if(window.isInBattle === false){
+                    //console.log('Pushing to Devvit');
+
+                    //we are going to request update the window.Enemies and window.Snoo.
+                    window.parent?.postMessage(
+                        {
+                        type: "updateRedis",
+                        data: {} // no data need to be sent.
+                        },
+                        '*'
+                    );
+                }
+
+                // reset  readWait.
+                readWait = 0;
+            }
+            
+
             lastRender = timeStamp - delta * 1000;
             this.pLastRender.innerText = `lastRender: ${lastRender.toFixed(0)}`
 
@@ -175,11 +184,16 @@ class OverWorld {
         });
 
         new KeyPressListener('Escape', () => {
+
             if(!this.map.isCutscenePlaying){
                 this.map.startCutscene([
-                    { type: "pause"}
+                    { type: "pause" }
                 ]);
             }
+        });
+
+        new KeyPressListener('E', () => {
+            console.log('Open Inventory!');
         });
     }
 
@@ -192,6 +206,8 @@ class OverWorld {
     }
 
     startMap(mapConfig, InitialState=null){
+        console.dir(InitialState);
+
         this.map = new OverWorldMap(mapConfig);
         this.map.overworld = this;
         this.map.mountObjects();
@@ -201,27 +217,12 @@ class OverWorld {
             this.map.gameObjects.player.y = InitialState.y;
             this.map.gameObjects.player.direction = InitialState.direction;
         }
+
+        this.progress.mapId = mapConfig.id;
+        this.progress.startingPlayerX = this.map.gameObjects.player.x;
+        this.progress.startingPlayerY = this.map.gameObjects.player.y;
+        this.progress.startingPlayerDirection = this.map.gameObjects.player.direction;
     }
-
-    startAudio(container){
-
-
-        // this.audioElementButton = document.createElement("div");
-        // this.audioElementButton.classList.add("AudioElementButtons");
-        // this.audioElementButton.innerHTML = (`
-        //     <audio id="Audio_Button"></audio>
-        // `);
-
-        // this.audioElementBGM = document.createElement("div");
-        // this.audioElementBGM.classList.add("AudioElementBMG");
-        // this.audioElementBGM.innerHTML = (`
-        //     <audio id="Audio_BGM"></audio>
-        // `);
-        // container.appendChild(this.audioElementBGM);
-        // container.appendChild(this.audioElementButton);
-
-    }
-
 
     FPSCounter(container){
         this.FpsElement = document.createElement("div");
@@ -233,52 +234,45 @@ class OverWorld {
         container.appendChild(this.FpsElement);
     }
 
-
     async init(){
         const container = document.querySelector(".game-container");
+
         this.FPSCounter(container);
         this.devStats(container);
 
-        // EventUtils.emitEvent("PersonStandComplete", {
-        //     whoId: this.id,
-        // });
-
         this.canvas.focus();
-        this.canvas.addEventListener("focus", () => {
-            window.AudioBgm.play();
-            window.AudioGainNode.gain.linearRampToValueAtTime(1, window.AudioCtx.currentTime + 2);
-        });
 
         this.titleScreen = new TitleScreen({
 
         });
         await this.titleScreen.init(container)
 
-
         this.pFps = document.querySelector(".fps");
         this.pDelta = document.querySelector(".delta");
         this.pBeat = document.querySelector(".beat");
         this.pLastRender = document.querySelector(".lastRender");
+        this.pReadRate = document.querySelector(".readRate");
+        this.pPlayerPos = document.querySelector(".ClientPlayerPos");
 
-
-
-        this.canvas.focus();
+        this.progress = new Progress();  
 
 
         this.hud = new Hud();
         this.hud.init(container);
 
-        this.startMap(window.OverWorldMaps.Street);
 
-        
+        console.log(`window.playerState.progress.mapId:\n${window.playerState.progress.mapId}`)
+
+        this.startMap(window.OverWorldMaps[window.playerState.progress.mapId], window.playerState.progress);
+
         this.bindActionInput(container);
         this.bindPlayerPositionCheck();
 
         this.directionInput = new DirectionInput();
         this.directionInput.init();
         
-
-
         this.startGameLoop();
+        this.cameraPerson = this.map.gameObjects.player;
+
     }
 }

@@ -7,7 +7,7 @@ class KeyBoardMenu {
       this.descriptionContainer = config.descriptionContainer || null;
     }
   
-    setOptions(options) {
+    setButton(options) {
       this.options = options;
       this.element.innerHTML = this.options.map((option, index) => {
         const disabledAttr = option.disabled ? "disabled" : "";

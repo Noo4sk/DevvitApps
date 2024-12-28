@@ -27,8 +27,10 @@ class SubmissionMenu {
     }
 
     decide(){
+        //console.dir(this.caster);
+
         // TODO: AI Logic for Players
-        this.menuSubmit(Actions[ this.caster.actions[0] ])
+        this.menuSubmit(Actions[ this.caster.heldActions[0] ]);
     }
 
     getPages(){
@@ -36,10 +38,9 @@ class SubmissionMenu {
             label: "Back",
             description: "Return to previous page",
             handler: () => {
-                this.keyboardMenu.setOptions( this.getPages().root)
+                this.keyboardMenu.setButton( this.getPages().root)
             }
         }
-
 
         return {
             root: [
@@ -48,7 +49,7 @@ class SubmissionMenu {
                     description: "Your Attacks..",
                     handler: () => {
                         // DO SOMETHING
-                        this.keyboardMenu.setOptions( this.getPages().Attack)
+                        this.keyboardMenu.setButton( this.getPages().Attack)
                     }
                 },
                 {
@@ -56,7 +57,7 @@ class SubmissionMenu {
                     description: "Items That you Can Use",
                     handler: () => {
                         // DO SOMETHING
-                        this.keyboardMenu.setOptions( this.getPages().Items)
+                        this.keyboardMenu.setButton( this.getPages().Items)
 
                     }
                },
@@ -65,12 +66,12 @@ class SubmissionMenu {
                     description: "Their IS no Running",
                     disabled: true,
                     handler: () => {
-                        // DO SOMETHING
+                        // DO SOMETHING 
                     }
                }
             ],
             Attack: [
-                ...this.caster.actions.map(key => {
+                ...this.caster.heldActions.map(key => {
                     const action = Actions[key];
                     return {
                         label: action.name,
@@ -116,16 +117,16 @@ class SubmissionMenu {
         this.keyboardMenu = new KeyBoardMenu();
         this.keyboardMenu.init(container);
 
-        this.keyboardMenu.setOptions(this.getPages().root);
+        this.keyboardMenu.setButton(this.getPages().root);
     }
 
     init(container){
 
         if(!this.caster.isPlayerControlled){
-            // Feature container will be used.
             this.decide();
         
         } else {
+
             this.showMenu(container);
         }
 

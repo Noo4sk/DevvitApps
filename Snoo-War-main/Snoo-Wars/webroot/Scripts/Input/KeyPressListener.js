@@ -9,6 +9,8 @@ class KeyPressListener {
         let keyNotInUse = true;
 
         this.keyDownFunction = function(event) {
+            event.preventDefault();
+
             if(event.code === keycode){
                 if(keyNotInUse){
                     keyNotInUse = false; 
@@ -18,6 +20,8 @@ class KeyPressListener {
         }
 
         this.keyUpFunction = function(event) {
+            event.preventDefault();
+
             if(event.code === keycode){
                 keyNotInUse = true;
             }

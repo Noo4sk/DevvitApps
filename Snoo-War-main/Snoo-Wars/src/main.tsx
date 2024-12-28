@@ -1,46 +1,10 @@
-import { aw } from 'vitest/dist/chunks/reporters.D7Jzd9GS.js';
 import './createPost.js';
 
-import { Devvit, useState } from '@devvit/public-api';
-
-type PlayerState = {
-    "snoo": {
-      [id: string]: {
-          name: string,
-          snooImage: string,
-          id: string,
-    
-          hp: number,
-          maxHp: number,
-          max_Xp: number,
-          xp: number,
-          level: number,
-    
-          status: {} | null,
-      }
-    }
-    playerName: string,
-    lineup: string[],
-    items: object[],
-    heldActions: string[],
-    storyFlags: {
-      [flag: string]: boolean,
-    },
-}
-
-// Defines the messages that are exchanged between Devvit and Web View
-type WebViewMessage =
-  | {
-      type: 'initialData';
-      data: { id: string, username: string; snooImage: string, playState: PlayerState, playerList: string};
-    }
-  | {
-      type: 'updateRedis';
-      data: { 
-        playerState: any,
-        id: string
-      }
-    }
+import { Devvit, useChannel, useState } from '@devvit/public-api';
+import { RemoveRedisSave } from './Utils/removeRedisSave.js';
+import { WebViewMessage } from './types/WebViewMessage.js';
+import { updateRedis } from './database/updateRedis.js';
+import { getPlayer, newPlayer } from './database/player.js';
 
 Devvit.configure({
   redditAPI: true,
@@ -48,23 +12,28 @@ Devvit.configure({
   realtime: true,
 });
 
-
 // Add a custom post type to Devvit
 Devvit.addCustomPostType({
   name: 'SnooWar',
   height: 'tall',
   render: (context) => {
-    // Load username with `useAsync` hook
+
+    // ==================== USER INFO ====================
+
+    // Return the Username of the user.
     const [username] = useState(async () => {
       const currUser = await context.reddit.getCurrentUser();
       return currUser?.username ?? 'anon';
     });
 
+
+    //  Return the ID of the user.
     const [userID] = useState(async () => {
       const userID = context.userId;
       return userID ?? 'anon';
     });
 
+    // Returns the Snoo image of the user. 
     const [SnooImage] = useState(async () => {
       const currUser = await context.reddit.getCurrentUser();
 
@@ -72,92 +41,34 @@ Devvit.addCustomPostType({
       return SnooUrl ?? 'anon';
     });
 
+    // ============== Get the Player From Database.. ==============
+    const [player] = useState(async () => {
+      // Get The redis_player as String from Redis "Player_Base" Using User ID.
+      const redis_player = await context.redis.hGet("Player_Base", userID);
+
+      // if undefind there is no player So lets Make one.
+      if (redis_player === undefined){
+        return await newPlayer(context, userID, username, SnooImage);
+      
+      } else {
+        return await getPlayer(redis_player);
+
+      }
+
+    });
+
+    // ============== Return a list of all players in the Data base. ==============
     const [PlayerList] = useState(async () => {
       
       const players = await context.redis.hGetAll("Player_Base");
 
-      if(players){
+      if(Object.keys(players).length > 0){
         return JSON.stringify(players);
-
       }
 
       return 'anon';
     });
 
-    const [player] = useState(async () => {
-
-      // const getToRemove = await context.redis.hGetAll("Player_Base")
-      
-      // Object.keys(getToRemove).forEach( async (key) =>{
-      //   console.log(`key: ${key}`);
- 
-      //   const numFieldsRemoved = await context.redis.hDel("Player_Base", [key]);
-      //   console.log("Number of fields removed: " + numFieldsRemoved);
-      // })
-
-      
-      const redis_player = await context.redis.hGet("Player_Base", userID);
-      if (redis_player === undefined){
-        console.log(`redis_player was not found... creating User`);
-
-        const _player: PlayerState = {
-            "snoo": {
-              [userID]: {
-                name: username,
-                snooImage: SnooImage,
-                id: userID,
-                hp: 30,
-                maxHp: 30,
-                xp: 0,
-                max_Xp: 100,
-                level: 1,
-                status: {},
-              }
-            },
-            playerName: username,
-            lineup: [],
-            items: [],
-            heldActions: ['damage1'],
-            storyFlags: {
-              'TestValue': true,
-            }
-        }
-        let check = await context.redis.hSet("Player_Base", {
-          [userID]: JSON.stringify(_player),
-        });
-        console.log(`Saving To Redis: ${check}`);
-
-        console.log(`Returing Current Player`);
-        return JSON.stringify(_player);
-      }
-
-
-      
-      let rPlayerObj = JSON.parse(redis_player);
-
-      // check to make sure Object has playerState key
-      if(rPlayerObj?.playerState === undefined){
-        console.log(`NO PlayerState Found Adding...`)
-        const _playerState = {
-          playerState: {
-            ...rPlayerObj
-          }
-        }
-        let _playerStateString = JSON.stringify(_playerState);
-        console.log(`_playerState:\n${_playerStateString}\n`);
-
-        return _playerStateString;
-
-      } else {
-        let rPlayerString = JSON.stringify(rPlayerObj);
-        console.log(`rPlayer:\n${rPlayerString}\n`);
-        console.log(`redis_player was found... using User`);
-
-        return rPlayerString;
-      }
-
-
-    });
 
     // Create a reactive state for web view visibility
     const [webviewVisible, setWebviewVisible] = useState(false);
@@ -165,26 +76,10 @@ Devvit.addCustomPostType({
     // When the web view invokes `window.parent.postMessage` this function is called
     const onMessage = async (msg: WebViewMessage) => {
       switch (msg.type) {
-        case 'updateRedis':
-          console.log(`Message received...\n================================================\n`);
-
-          const updateToObj = JSON.parse(msg.data.playerState)
-          console.log(`msg.data.id ${msg.data.id}`);
         
-          console.log(`"Player_Base",  {
-            ${[msg.data.id]}: ${JSON.stringify(updateToObj, undefined, 2)}
-
-          }`);
-
-
-          const check = await context.redis.hSet("Player_Base",  {
-            [msg.data.id]: JSON.stringify(updateToObj)
-
-          }) || 'failed';
-
-
-          console.log(`updateRedis: Updated ${check} Item`);
-          console.log(`\n================================================\n`);
+        // Message Recived from WebApp With type of 'updateRedis' 
+        case 'updateRedis':
+          await updateRedis(context, msg);
           break;
 
         case 'initialData':
@@ -204,7 +99,7 @@ Devvit.addCustomPostType({
           id: userID,
           username: username,
           snooImage: SnooImage,
-          playerList: PlayerList,
+          playerList: PlayerList, 
         },
       });
     };
@@ -248,5 +143,8 @@ Devvit.addCustomPostType({
     );
   },
 });
+
+
+RemoveRedisSave();
 
 export default Devvit;

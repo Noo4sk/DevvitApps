@@ -18,6 +18,7 @@ class OverWorldMap {
 
         this.isCutscenePlaying = false;
         this.isPaused = false;
+        this.isInBattle = false;
 
         this.showWalls = false;
         this.wallsImage = new Image();
@@ -159,6 +160,8 @@ window.OverWorldMaps = {
         configObjects: {
             player: {
                 type: "person",
+                id: "",
+                username: "",
                 isPlayerControlled: true,
                 x: utils.withGrid(20),
                 y: utils.withGrid(8),
@@ -174,12 +177,35 @@ window.OverWorldMaps = {
                 talking: [
                    {
                     events: [
-                        { type: "textMessage", text: "Need More Health?", facePlayer: "npcA"},
+                        { type: "textMessage", text: "Need More Health?", actor: 'npcA', facePlayer: "npcA"},
                         { type: "healSnoo" }
                     ]
                    }
                 ]
             },
+            // npcB: {
+            //     type: "person",
+            //     x: utils.withGrid(20),
+            //     y: utils.withGrid(6),
+            //     src: "./assets/Characters/Woof/s5-2-wolf-Sheet-walk.png",
+            //     behaviorLoop: [
+            //         {type: "stand", direction: "down"},
+            //     ],
+            //     talking: [
+            //        {
+            //         events: [
+            //             { type: "textMessage", text: "Here Take This!", facePlayer: "npcB"},
+                        
+
+            //             { type: "updateRedis"},
+
+            //             { who: "npcB", type: "walk", direction: "up" },
+            //             { who: "npcB", type: "walk", direction: "up" },
+            //             { who: "npcB", type: "stand", direction: "down" },
+            //         ]
+            //        }
+            //     ]
+            // },
         },
         walls: {
             
@@ -203,7 +229,17 @@ window.OverWorldMaps = {
                     
                     events: [
                         { type: "battlePvp" },
+                        { type: "updateRedis"},
                         { who: "player", type: "walk", direction: "down", },
+                    ]
+                }
+            ],
+            [utils.asGridCoord(18, 6)]: [
+                {
+                    
+                    events: [
+                        { type: "textMessage", text: "Saving..."},
+                        { type: "updateRedis"},
                     ]
                 }
             ],
@@ -310,7 +346,7 @@ window.OverWorldMaps = {
                 x: utils.withGrid(3),
                 y: utils.withGrid(6)
             },
-            npcA: {
+            'shopKeep Yami': {
                 type: "person",
                 x: utils.withGrid(8),
                 y: utils.withGrid(4),
@@ -319,12 +355,14 @@ window.OverWorldMaps = {
                 talking: [
                    {
                     events: [
-                        {type: "textMessage", text: "This Game Is Under Devlopment By Noo-Ask. Have Fun and look Around", facePlayer: "npcA"}
+                        {type: "textMessage", text: "This game is under Development By Noo-Ask.", actor: "shopKeep Yami", facePlayer: "shopKeep Yami"},
+                        {type: "textMessage", text: "Have Fun and look Around.", actor: "shopKeep Yami", facePlayer: "shopKeep Yami"}
+
                     ],
                    }
                 ],
             },
-            npcB:  {
+            'ShopKeep Stan':  {
                 type: "person",
                 x: utils.withGrid(3),
                 y: utils.withGrid(3),
@@ -334,16 +372,14 @@ window.OverWorldMaps = {
                     {   
                         required: ["Battle_Won_001"],
                         events: [
-                            { type: "textMessage", text: "I Guess your Looks is Ok..", facePlayer: "npcB" },                  
+                            { type: "textMessage", text: "I Guess your Looks is Ok..", actor: "ShopKeep Stan" ,facePlayer: "ShopKeep Stan" },                  
                         ],
                     },
                    {
                         events: [
-                            { type: "textMessage", text: "I dont like your look", facePlayer: "npcB" },
-                            { type: "textMessage", text: "Well I dont like your look"},
+                            { type: "textMessage", text: "I dont like your look", actor: "ShopKeep Stan", facePlayer: "ShopKeep Stan" },
+                            { type: "textMessage", text: "Well I dont like your look", actor: `${localStorage.getItem('username')}`},
                             { type: "addStoryFlag", flag: "Battle_Won_001" },
-                            // { type: "battle", enemyId: "Tester" },
-                            // { type: "updateRedis" },
                         ],
                    }
                 ],
@@ -401,11 +437,19 @@ window.OverWorldMaps = {
                 },
                 {
                     events: [
-                        { who: "npcB", type: "walk", direction: "down", },
-                        { type: "textMessage", text: "I dont like your look"},
-                        { who: "npcB", type: "walk", direction: "up", },
-                        { who: "npcB", type: "stand", direction: "down", time: 100, },
+                        { type: "ChangeCamera", who: "ShopKeep Stan" },
+                        { who: "ShopKeep Stan", type: "walk", direction: "right" }, { who: "ShopKeep Stan", type: "walk", direction: "right" },
+                        { who: "ShopKeep Stan", type: "walk", direction: "right" }, { who: "ShopKeep Stan", type: "walk", direction: "right" },
+                        { who: "ShopKeep Stan", type: "walk", direction: "down" }, 
 
+                        { type: "textMessage", text: "I dont like your look", actor: "ShopKeep Stan"},
+
+                        { who: "ShopKeep Stan", type: "walk", direction: "up", },  { who: "ShopKeep Stan", type: "walk", direction: "left" },
+                        { who: "ShopKeep Stan", type: "walk", direction: "left", },  { who: "ShopKeep Stan", type: "walk", direction: "left", },
+                        { who: "ShopKeep Stan", type: "walk", direction: "left", },
+
+                        { who: "ShopKeep Stan", type: "stand", direction: "down", time: 100, },
+                        { type: "ChangeCamera", who: "player" },
 
                     ],
                 }

@@ -7,12 +7,15 @@ class TurnCycle {
     }
 
     async turn(){
+
         // Who's Turn
+
         const casterId = this.battle.activeCombatants[this.currentTeam];
         const caster = this.battle.combatants[casterId];
+
         const enemyId = this.battle.activeCombatants[caster.team === "player" ? "enemy" : "player"];
         const enemy = this.battle.combatants[enemyId];
-        
+
         const submission = await this.onNewEvent({
             type: "submissionMenu",
             enemy,
@@ -27,6 +30,8 @@ class TurnCycle {
         }
 
         const resultingEvents = submission.action.success;
+        console.log(resultingEvents);
+
         for (let i = 0; i < resultingEvents.length; i++) {
             const event = {
                 ...resultingEvents[i],
@@ -37,6 +42,7 @@ class TurnCycle {
             }
             await this.onNewEvent(event);
         }
+        console.log(`Uses: ${submission.action.name}`)
 
         const postEvents = caster.getPostEvents();
         for (let events = 0; events < postEvents.length; events++) {
@@ -54,21 +60,29 @@ class TurnCycle {
         // Did we kill The Target.
         const targetDead = submission.target.hp <= 0;
         if(targetDead){
+            console.log(`target Dead: ${submission.target.name}`);
+
             await this.onNewEvent(
                 {type: "textMessage", text: `${submission.target.name} was Defeated.`}
             );
 
             if(submission.target.team === "enemy"){
-
                 const playerActiveSnooId = this.battle.activeCombatants.player;
                 const xp = submission.target.givesXp;
+                const money = Number(submission.target.givesMoney);
+
                 await this.onNewEvent({
                     type: "textMessage",
-                    text: `Gained ${xp} xp`
+                    text: `Gained ${xp} xp and $${money.toLocaleString()}`
                 });
                 await this.onNewEvent({
                     type: "giveXp",
                     xp,
+                    combatant: this.battle.combatants[playerActiveSnooId]
+                });
+                await this.onNewEvent({
+                    type: "giveMoney",
+                    money,
                     combatant: this.battle.combatants[playerActiveSnooId]
                 });
             }
@@ -76,10 +90,13 @@ class TurnCycle {
 
         const winner = this.getWinningTeam();
         if(winner){
-            // End the Battle;
-            await this.onNewEvent(
-                {type: "textMessage", text: `Winner.`}
-            );
+
+            if (winner === 'player'){
+                // End the Battle;
+                await this.onNewEvent(
+                    {type: "textMessage", text: `Winner.`}
+                );
+            }
 
             this.onWinner(winner);
 
@@ -107,12 +124,16 @@ class TurnCycle {
 
 
     async init(){
+        console.groupCollapsed(`Battle Start!`);
 
-        console.log(this.battle.enemy);
+        Logging.logObject({
+            name: 'this.battle.enemy',
+            object: this.battle.enemy,
+        });
 
         await this.onNewEvent({
             type: "textMessage",
-            text: `${this.battle.enemy.playerName} wants to challage you to a fight.`
+            text: `${this.battle.enemyName} wants to challage you to a fight.`
         });
         this.turn();
     }

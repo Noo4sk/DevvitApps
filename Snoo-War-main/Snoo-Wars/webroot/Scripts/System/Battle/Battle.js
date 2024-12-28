@@ -1,6 +1,4 @@
 class Battle {
-
-
     constructor(
         { enemy, onComplete }
     ){
@@ -8,13 +6,13 @@ class Battle {
         this.combatants = {};
 
         this.enemyID;
+        this.enemyName;
+        this.enemySnooImage;
         this.enemy = enemy;
 
-        console.log(`[Battle: 13] Enemy:\n${JSON.stringify(this.enemy, undefined, 2)}`);
-        
         this.activeCombatants = {
-            player: null, //'playerSnoo',
-            enemy: null //'enemySnoo'
+            player: null,
+            enemy: null,
         };
 
         // Dynamically Adding the player Team
@@ -26,16 +24,34 @@ class Battle {
             );
         });
 
+        const enemyPlayerState = this.enemy;
 
-        Object.keys(this.enemy.snoo).forEach( key => {
-            console.log(`Key: ${key},\nsnoo: ${JSON.stringify(this.enemy.snoo[key], undefined, 2)}`);
+        Logging.logObject({
+            name: 'enemyPlayerState',
+            object: enemyPlayerState,
+        })
 
-            this.enemyID = this.enemy.snoo[key].id
+        Logging.logObject({
+            name: 'enemyPlayerState.snoo',
+            object: enemyPlayerState.snoo,
+        })
+
+        Object.keys(enemyPlayerState.snoo).forEach( key => {
+            Logging.logObject({
+                name: `${enemyPlayerState.snoo[key]}`,
+                object: enemyPlayerState.snoo[key],
+            })
+
+            this.enemyID = enemyPlayerState.snoo[key].id;
+            this.enemyName = enemyPlayerState.snoo[key].name;
+            this.enemySnooImage = enemyPlayerState.snoo[key].snooImage;
+
             this.addCombatant(
                 key,
                 "enemy",
-                this.enemy.snoo[key],
+                enemyPlayerState.snoo[key],
                );
+
         });
 
         this.items = [];
@@ -52,36 +68,26 @@ class Battle {
     }
 
     createElement() {
-
         this.element = document.createElement("div");
         this.element.classList.add("Battle");
         this.element.innerHTML = (`
             <div class="battle_Player">
-                <img src="${`./assets/Characters/Cat/s5-2-cat-Sheet-walk.png`}" alt="PlayerSnoo" />
+                <img src="${`./assets/Characters/Cat/s5-2-cat-Sheet-walk.png`}" alt="PlayerCharacter" />
             </div>
             <div class="battle_Enemy">
-               <!-- <img src="${this.enemy.snoo[this.enemyID].snooImage}" alt=${this.enemy.playerName} /> -->
+               <!-- <img src="${this.enemySnooImage}" alt=${this.enemyName} /> -->
             </div>
         `);
     }
 
     addCombatant(id, team, config){
-        console.log(JSON.stringify({
-            ...Snoo[config.id],
-            ...config,
-            team,
-            isPlayerControlled: team === "player",
-        }, undefined, 2));
-
         this.combatants[id] = new Combatant({
             ...Snoo[config.id],
             ...config,
             team,
             isPlayerControlled: team === "player",
-
         }, this);
         this.activeCombatants[team] = this.activeCombatants[team] || id;
-
     }
 
     async init(container){
@@ -107,16 +113,23 @@ class Battle {
                 const sceneTransitionOverWorld = new SceneTransition();
                 
                 if(winner === "player"){
-                    const playerState = window.playerState;
+                    console.log(`Battle Over winner [Player]`);
+
                     Object.keys(playerState.snoo).forEach( id => {
-                        const playerStateSnoo = playerState.snoo[id];
+                        console.log(`ID: ${id}`);
+
                         const combatant = this.combatants[id];
+
+                        const _playerState = window.playerState.snoo[id];
+                        
                         if (combatant){
-                            playerStateSnoo.hp = combatant.hp;
-                            playerStateSnoo.xp = combatant.xp;
-                            playerStateSnoo.max_Xp = combatant.max_Xp;
-                            playerStateSnoo.level = combatant.level;
+                            _playerState.hp = _playerState.maxHp;
+                            _playerState.xp = combatant.xp;
+                            _playerState.max_Xp = Math.pow( (combatant.level/0.1), 2);
+
+                            _playerState.level = combatant.level;
                         }
+
                     });
 
                     // remove player used items;
@@ -130,13 +143,17 @@ class Battle {
 
                 sceneTransitionOverWorld.init(document.querySelector(".game-container"), async () => {
                     sceneTransitionOverWorld.fadeOut();
-                    
+
                     window.AudioBgm.src = "./assets/Audio/8_Bit_Menu_David_Renda.mp3";
                     window.AudioBgm.play();
 
+                    window.isInBattle = false;
+                    playerState.battleWon += 1;
+
                     this.element.remove();
                     this.onComplete(winner === "player");
-
+                    
+                    console.groupEnd();
                 });
             }
         });

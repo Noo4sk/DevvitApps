@@ -1,6 +1,7 @@
 .Battle {
     user-select: none;
     position: absolute;
+    z-index: 2;
 
     left: 0;
     right: 0;
@@ -11,14 +12,36 @@
     background-size: cover;
     image-rendering: pixelated;
     z-index: 2;
+
+    transform: scale(0.5);
+}
+
+
+.Battle .DescriptionBox {
+    position: absolute;
+
+    padding: 2px;
+
+    width: 290px;
+    bottom: 1em;
+    left: 11em;
+
+    color: var(--menu-font-color);
+    border-top: 1px soild var(--border-color);
+    background: var(--menu-background);
+
+    transform: scale(2);
 }
 
 .battle_Player, .battle_Enemy {
     position: absolute;
-    transform: scale(2);
+
     width: 32px;
     height: 32px;
     overflow: hidden;
+
+    transform: scale(1.5);
+
 }
 
 .battle_Player img, .battle_Enemy img {
@@ -53,6 +76,7 @@
     animation: battle-damage-blink 0.3s steps(2, start) infinite;
 }
 
+/* ========================== WHOMP ========================== */
 
 /* Player */
 @keyframes battle-attack-right {
@@ -65,17 +89,103 @@
 }
 
 /* ENEMY */
-@keyframes battle-attack-left {
-    0% { 
-        transform: translate3d(0, 0, 0) rotateY(180deg)
-    }
-    25% { 
-        transform: translate3d(-100%, 0, 0) rotateY(180deg)
-    }
-    100% { 
-        transform: translate3d(0, 0, 0) rotateY(180deg)
-    }
+@keyframes battle-attack-left  {
+    0% { transform: translate3d(0, 0, 0) rotateY(180deg)}
+    25% { transform: translate3d(-100%, 0, 0) rotateY(180deg)}
+    100% { transform: translate3d(0, 0, 0) rotateY(180deg)}
 }
 .battle-attack-left {
     animation: battle-attack-left 0.8s;
+}
+
+
+/* ========================== Floating Numbers ========================== */
+
+/* .floatNumber[data-active="true"]{
+    left: 123px;
+    top: 73px;
+    position: absolute;
+    color: red;
+    font-size: 3px;
+    z-index: 5;
+} */
+
+
+/*-------------- player --------------*/
+.floatNumber[data-team="player"]{
+    opacity: 0;
+    position: absolute;
+    right: 2em;
+    top: 6em;
+    font-size: 40px;
+    color: red;
+}
+
+
+@keyframes battle-float-right {
+    0% { 
+        opacity: 25%;
+        transform: translate3d(0, 0, 0)
+    }
+    25% { 
+        opacity: 50%;
+    }
+    50% { 
+        opacity: 100%;
+    }
+    75% { 
+        opacity: 100%;
+    }
+    85% { 
+        opacity: 75%;
+    }
+    95% { 
+        opacity: 50%;
+    }
+    100% { 
+        opacity: 0%;
+        transform: translate3d(0, -100px, 0)
+    }
+}
+.battle-float-right {
+    animation: battle-float-right 1s;
+}
+
+/*-------------- Enemy --------------*/
+.floatNumber[data-team="enemy"]{
+    opacity: 0;
+    position: absolute;
+    left: 2em;
+    top: 6em;
+    font-size: 40px;
+    color: red;
+}
+
+@keyframes battle-float-left {
+    0% { 
+        opacity: 25%;
+        transform: translate3d(0, 0, 0)
+    }
+    25% { 
+        opacity: 50%;
+    }
+    50% { 
+        opacity: 100%;
+    }
+    75% { 
+        opacity: 100%;
+    }
+    85% { 
+        opacity: 75%;
+    }
+    95% { 
+        opacity: 50%;
+    }
+    100% { 
+        opacity: 0%;
+        transform: translate3d(0, -100px, 0)
+    }
+}
+.battle-float-left {
+    animation: battle-float-left 1s;
 }

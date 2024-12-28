@@ -1,31 +1,34 @@
 .TextMessage {
     caret-color: transparent;
     position: absolute;
-    left: 62px;
-    right: 60px;
-    bottom: 33px;
-    height: 26px;
-
+    left: 15em;
+    bottom: 8em;
     padding: 1px;
 
     background: var(--menu-background);
     border-top: 1px solid var(--menu-border-color);
     color: var(--menu-font-color);
+
+    height: 25px;
+    width: 200px;
+    transform: scale(1.5);
 }
 
 .Battle .TextMessage {
     caret-color: transparent;
     position: absolute;
-    left: 62px;
-    right: 60px;
-    bottom: 33px;
-    height: 26px;
+
+    left: 14em;
+    bottom: 1em;
+    height: 32px;
 
     padding: 7px;
 
     background: var(--menu-background);
     border-top: 1px solid var(--menu-border-color);
     color: var(--menu-font-color);
+
+    transform: scale(2);
 }
 
 
@@ -33,7 +36,21 @@
     margin: 0;
     font-size: 8px;
 }
-.TextMessage span{
+
+.TextMessage_p .Character-container{
+    padding-left: 5px;
+}
+
+.TextMessage_p p{
+    margin: 0;
+    font-size: 8px;
+    padding-left: 5px;
+    background-color: var(--menu-selected-background);
+    text-align: left;
+}
+
+
+.TextMessage span {
     opacity: 0;
 }
 .TextMessage span.revealed{

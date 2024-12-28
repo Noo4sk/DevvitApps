@@ -1,0 +1,80 @@
+.Credits {
+    position: absolute;
+    display: none;
+
+    z-index: 1;
+
+    top: 8em;
+    left: 11em;
+    width: 325px;
+    height: 225px;
+
+    background: #5e5a52;
+}
+
+.Credits h2 {
+    position: absolute;
+    left: 5em;
+}
+
+.Credits #credit_Menu_Exit {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+
+    width: 11px;
+    height: 11px;
+
+    background-size: cover;
+    background-image: url('../../../assets/UI/Exit.png');
+    background-color: transparent;
+    border: none;
+}
+
+.Credits #credit_Menu_Exit:hover {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    
+    width: 12px;
+    height: 12px;
+
+    background-size: cover;
+    background-image: url('../../../assets/UI/Exit_highlight.png');
+    border: none;
+}
+
+.Credits #credits-Container {
+    position: absolute;
+
+    top: 3em;
+    left: 1em;
+    width: 293px;
+    height: 132px;
+
+    border: 1px solid black;
+    background-color: #827a69;
+
+    overflow-y: scroll;
+    scrollbar-color: rgb(51, 51, 52) #827a69; 
+}
+
+.Credits #credits-Container #credit_Lists {
+    position: absolute;
+    top: 0;
+    left: 10px;
+}
+
+.Credits dt {
+    font-weight: bold;
+}
+
+.Credits dl, dd {
+    font-size: 10px;
+    margin-bottom: 10px;
+}
+
+.Credits #author {
+    font-weight: bold;
+    margin-bottom: 0;
+}

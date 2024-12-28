@@ -10,7 +10,6 @@
     align-items: center;
     width: 100%;
     text-align: left;
-    /* -webkit-appearance: none; */
     border: 0;
     background: none;
     height: 15px;
@@ -43,8 +42,8 @@
 
 .DescriptionBox {
     position: absolute;
-    bottom: 33px;
-    left: 57px;
+    bottom: 20px;
+    left: 125px;
     right: 0;
 
     color: var(--menu-font-color);
@@ -61,7 +60,8 @@
 }
 
 .Battle .KeyBoardMenu {
-    right: 228px;
-    bottom: 34px;
+    left: 4em;
+    bottom: 4em;
     width: 60px;
+    transform: scale(2);
 }

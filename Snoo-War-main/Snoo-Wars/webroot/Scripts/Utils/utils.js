@@ -55,5 +55,17 @@ const utils = {
             resolve();
           }, ms);
         });
+      },
+
+      resizeImage(img, newWidth, newHeight) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+      
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+      
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+      
+        return canvas.toDataURL(); // Returns the resized image as a base64 encoded string
       }
 }

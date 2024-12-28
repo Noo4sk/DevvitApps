@@ -1,36 +1,28 @@
 .TitleScreen {
-    user-select: none;
+    caret-color: transparent;
+
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-
     background: #000;
-}
-
-.Title_p {
-    position: absolute;
-    left: 132px;
-    color: #fff;
 }
 
 .TitleScreen_Logo {
     position: absolute;
-    top: 50px;
-    left: 160px;
-
     display: block;
-    margin: 0;
-    width: 32px;
-    image-rendering: pixelated;
+    top: 12em;
+    left: 19em;
+    width: 64px;
 
-    color: white;
+    margin: 0 auto;
+    image-rendering: pixelated;
 }
 
 .TitleScreen .KeyBoardMenu {
     position: relative;
-    top: 100px;
+    top: 18em;
     margin: 0 auto;
     width: 100px;
     border: 0;
@@ -41,22 +33,74 @@
     color: black;
     background-color: var(--menu-background);
     justify-content: center;
-    padding: 0;
+    padding-bottom: 1px;
+    border: 1px solid black;
 }
 
 .TitleScreen .KeyBoardMenu button:focus {
     color: black;
     background-color: var(--menu-selected-background);
+    padding-bottom: 1px;
+    border: 1px solid black;
 }
 
 
 .TitleScreen .DescriptionBox {
     position: absolute;
-    top: 125px;
-    right: 130px;
+    top: 20em;
+    left: 0;
+    width: 100%;
+    height: 30px;
 
     background: transparent;
+}
+
+.TitleScreen .DescriptionBox p {
     color: #fff;
-    border: 0;
+
+    font-size: 13px;
     text-align: center;
+    padding: 0;
+}
+
+.Title_p {
+    position: absolute;
+    left: auto;
+
+    top: 8em;
+    left: 18em;
+
+    color: #fff;
+}
+
+
+.TitleScreen .Sound_Button {
+    position: absolute;
+    top: 10em;
+    right: 14em;
+
+    width: 15px;
+    height: 15px;
+
+    border: none;
+    background-image: url('../../../assets/Audio/Image/White_Music_Note.png');
+    background-size: cover;
+    background-color: #000000;
+}
+
+.TitleScreen .Sound_Button{
+    transition: 0.4s;
+}
+
+.TitleScreen .Sound_Button:hover{
+    position: absolute;
+    top: 10em;
+    right: 14em;
+
+    width: 18px;
+    height: 18px;
+
+    border: none;
+    background-image: url('../../../assets/Audio/Image/White_Music_Note.png');
+    background-size: cover;
 }

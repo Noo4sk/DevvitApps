@@ -64,6 +64,9 @@ class Person extends GameObject {
                 intentPosition.y,
             ];
 
+            window.playerState.progress.x = intentPosition.x;
+            window.playerState.progress.y = intentPosition.y;
+
             this.updateSprite(state);
         }
 

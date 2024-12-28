@@ -16,17 +16,23 @@
 
 
     <!-- HUD -->
-    <link rel="stylesheet" type="text/css" href="./Scripts/UI/Styles/TitleScreen.css" />
     <link rel="stylesheet" type="text/css" href="./Scripts/UI/Styles/Hud.css" />
-    <link rel="stylesheet" type="text/css" href="./Scripts/UI/Styles/Menus.css" />
+    <link rel="stylesheet" type="text/css" href="./Scripts/UI/Styles/Menu/PauseMenu.css" />
+    <link rel="stylesheet" type="text/css" href="./Scripts/UI/Styles/Menu/SoundMenu.css" />
+
     <link rel="stylesheet" type="text/css" href="./Scripts/UI/Styles/devStats.css" />
 
+    <!-- Title Screen -->
+    <link rel="stylesheet" type="text/css" href="./Scripts/UI/Styles/Credits.css" />
+    <link rel="stylesheet" type="text/css" href="./Scripts/UI/Styles/TitleScreen.css" />
 
   </head>
   <body>
     <div class="game-container">
       <canvas class="game-canvas" width="352" height="198"></canvas>
     </div>
+    <script src="./Scripts/Utils/Logging.js"></script>
+
 
     <!-- Content -->
     <script src="./Scripts/System/content/actions.js"></script>
@@ -63,6 +69,8 @@
     <script src="./Scripts/UI/Hud.js"></script>
     <script src="./Scripts/UI/Menu/PauseMenu.js"></script>
     <script src="./Scripts/UI/TitleScreen.js"></script>
+    <script src="./Scripts/System/Progress.js"></script>
+    <script src="./Scripts/System/Inventoy/Inventory.js"></script>
 
     <!-- BATTLE -->
     <script src="./Scripts/System/Battle/Battle.js"></script>
@@ -73,6 +81,8 @@
     <script src="./Scripts/UI/Battle/SubmissionMenu.js"></script>
 
     <script src="./Scripts/System/content/Snoo.js"></script>
+
+    <script src="./Scripts/DataBase/DataBase.js"></script>
     <script src="./Scripts/init.js"></script>
 
 

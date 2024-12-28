@@ -1,56 +1,35 @@
 class PlayerState {
     constructor(config){
-        let {id, username, state} = config
-        
+        let {userPlayerState, id} = config
+
         this.snoo = { 
-            [id]: state.playerState.snoo[id] 
+            [id]: userPlayerState.snoo[id] 
         } || {};
-        this.lineup = [];
+        this.lineup = userPlayerState.lineup.length <= 0 ? [id] : userPlayerState.lineup;
         this.items = [];
-        this.heldActions = [];
         this.storyFlags = {};
-        this.playerName = state.playerName || "";
+        this.battleWon = userPlayerState.battleWon || 0;
+        this.money = userPlayerState.money || 0;
+        this.progress = userPlayerState.progress || {};
 
-
-        if(Object.keys(state.playerState.storyFlags).length > 0){
-            Object.keys(state.playerState.storyFlags).forEach(key => {
+        if(Object.keys(userPlayerState.storyFlags).length > 0){
+            Object.keys(userPlayerState.storyFlags).forEach(key => {
                 this.storyFlags = {
                     ...this.storyFlags, 
-                    [key]: state.playerState.storyFlags[key]
+                    [key]: userPlayerState.storyFlags[key]
                 }
             });
         }
 
-        if(state.playerState.heldActions.length <= 0){
-            this.heldActions.push('damage1');
-        } else {
-            state.playerState.heldActions.forEach(item => {
-                this.heldActions.push(item);
-            });
-        }
-
-        if(state.playerState.lineup.length <= 0){
-            this.lineup.push(id);
-        } else {
-            state.playerState.lineup.forEach(item => {
-                console.log(item);
-                this.lineup.push(item);
-            });
-        }
-
-        if(state.playerState.items.length > 0){
-            state.playerState.items.forEach(item => {
+        if(userPlayerState.items.length > 0){
+            userPlayerState.items.forEach(item => {
                 console.log(item);
                 this.items.push(item);
             });
         }
 
-        window.Snoo = {...Snoo, [id]:{
-            name: username,
-            snooImage: this.snoo[id].snooImage,
-            actions: this.heldActions
-        }}
-
-        console.log(`Snoo: ${JSON.stringify(window.Snoo)}`);
+        console.groupCollapsed(`Player Init`);
+        console.dir(this);
+        console.groupEnd();
     }
 }    

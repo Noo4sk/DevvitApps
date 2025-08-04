@@ -5,6 +5,6 @@ I'm Still a pretty novice programer but I hope the items that i make will help y
 -----
 Devvit Badges
 
-[devvit_bage_11.19]()
+[Devvit Bage 11.19](https://github.com/Noo4sk/DevvitApps/blob/main/Badge/Devvit_0.11.19.svg)
 
 -----
